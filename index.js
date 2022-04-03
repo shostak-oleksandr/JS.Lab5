@@ -4,12 +4,26 @@ const Schema = mongoose.Schema;
 const app = express();
 const jsonParser = express.json();
  
+const {
+    MONGO_DB_HOSTNAME,
+    MONGO_DB_PORT,
+    MONGO_DB
+} = process.env
+
+const options = {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useFindAndModify: false
+}
+
+const url = `mongodb://${MONGO_DB_HOSTNAME}:${MONGO_DB_PORT}/${MONGO_DB}`;
+
 const userScheme = new Schema({firstname: String, lastname: String, age: Number, phone: Number}, {versionKey: false});
 const User = mongoose.model("User", userScheme);
  
 app.use(express.static(__dirname + "/public"));
  
-mongoose.connect("mongodb://localhost:27017/usersdb", { useUnifiedTopology: true, useNewUrlParser: true}, function(err){
+mongoose.connect(url, options, function(err){
     if(err) return console.log(err);
     app.listen(3000, function(){
         console.log("Сервер очікує підключення...");
